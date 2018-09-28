@@ -40,13 +40,13 @@ func ConnectToDatabase() (*sqlx.DB, error) {
 	return db, nil
 }
 
-func (p *PageMySQLAdapter) Add(page *page.Page, dbx *sqlx.DB) (*page.Page, error) {
-	stmt, err := dbx.Prepare(`INSERT INTO Page (URL, CONTENT) VALUES (?, ?)`)
+func (p *PageMySQLAdapter) Add(page *page.Page) (*page.Page, error) {
+	stmt, err := p.DB.Prepare(`INSERT INTO Page (URL, CONTENT) VALUES (?, ?)`)
 	defer stmt.Close()
 	if err != nil {
 		return nil, errors.Wrap(err, "page insert error")
 	}
-	result, err := stmt.Exec(p.URL, p.Content)
+	result, err := stmt.Exec(page.URL, page.Content)
 	if err != nil {
 		return nil, errors.Wrap(err, "stmt exec error")
 	}
@@ -54,7 +54,7 @@ func (p *PageMySQLAdapter) Add(page *page.Page, dbx *sqlx.DB) (*page.Page, error
 	if err != nil {
 		return nil, errors.Wrap(err, "last insertid error")
 	}
-	p.ID = id
+	page.ID = id
 
-	return p.domain(), nil
+	return page, nil
 }

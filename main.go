@@ -12,6 +12,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer dbx.Close()
 
 	pageusecase := page.NewPageUseCase(
 		db.NewPageMySQLAdapter(dbx),

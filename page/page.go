@@ -1,12 +1,11 @@
 package page
 
 import (
-	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 )
 
 type PageRepository interface {
-	Add(page *Page, dbx *sqlx.DB) (*Page, error)
+	Add(page *Page) (*Page, error)
 }
 
 type PageUseCase struct {
@@ -33,7 +32,7 @@ func NewPage(url, content string) *Page {
 }
 
 func (p PageUseCase) Add(page *Page) (*Page, error) {
-	page, err := p.Add(page)
+	page, err := p.PageRepo.Add(page)
 	if err != nil {
 		return nil, errors.Wrap(err, "usecase add error")
 	}
