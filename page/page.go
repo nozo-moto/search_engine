@@ -1,9 +1,12 @@
 package page
 
-import "github.com/pkg/errors"
+import (
+	"github.com/jmoiron/sqlx"
+	"github.com/pkg/errors"
+)
 
 type PageRepository interface {
-	Add(page *Page) (*Page, error)
+	Add(page *Page, dbx *sqlx.DB) (*Page, error)
 }
 
 type PageUseCase struct {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/nozo-moto/search_engine/db"
+	"github.com/nozo-moto/search_engine/page"
 )
 
 func main() {
@@ -11,13 +12,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	page := &db.Page{
+
+	pageusecase := page.NewPageUseCase(
+		db.NewPageMySQLAdapter(dbx),
+	)
+	page := &page.Page{
 		URL:     "http://example.com",
 		Content: "test",
-		DB:      dbx,
 	}
 
-	page, err = page.Insert()
+	page, err = pageusecase.Add(page)
 	if err != nil {
 		panic(err)
 	}
