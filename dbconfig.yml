@@ -1,0 +1,6 @@
+development:
+  dialect: mysql
+  datasource: root:password@tcp(0.0.0.0:13306)/search_engine?parseTime=true&charset=utf8mb4&interpolateParams=true
+  dir: migrations
+
+

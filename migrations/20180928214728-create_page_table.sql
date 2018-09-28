@@ -1,0 +1,12 @@
+
+-- +migrate Up
+
+CREATE TABLE Page (
+    ID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    URL VARCHAR(256) NOT NULL,
+    Text TEXT DEFAULT NULL,
+    FULLTEXT INDEX ngram_idx(Text) WITH PARSER ngram
+) Engine=InnoDB CHARACTER SET utf8mb4;
+-- +migrate Down
+
+DROP TABLE Page;
