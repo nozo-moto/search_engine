@@ -1,31 +1,32 @@
 package main
 
 import (
-	"fmt"
+	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/nozo-moto/search_engine/db"
 	"github.com/nozo-moto/search_engine/page"
+	"github.com/nozo-moto/search_engine/presenter/adapter"
 )
 
+type Server struct {
+	router *mux.Route
+}
+
 func main() {
+	router := mux.NewRouter()
 	dbx, err := db.ConnectToDatabase()
 	if err != nil {
 		panic(err)
 	}
 	defer dbx.Close()
 
-	pageusecase := page.NewPageUseCase(
-		db.NewPageMySQLAdapter(dbx),
+	pageAdapter := adapter.NewPageAdapter(
+		page.NewPageUseCase(
+			db.NewPageMySQLAdapter(dbx),
+		),
 	)
-	page := &page.Page{
-		URL:     "http://example.com",
-		Content: "test",
-	}
 
-	page, err = pageusecase.Add(page)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(page)
-
+	router.Handle("/api/v1/page", handler(pageAdapter.GET)).Methods("GET")
+	http.ListenAndServe(":8080", router)
 }
