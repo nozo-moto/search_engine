@@ -67,7 +67,7 @@ func (p *PageAdapter) GET(w http.ResponseWriter, r *http.Request) error {
 func (p *PageAdapter) AddTopPage(w http.ResponseWriter, r *http.Request) error {
 	var page Page
 	if err := json.NewDecoder(r.Body).Decode(&page); err != nil {
-		return err
+		return errors.Wrap(err, "addtoppage json newdecode error")
 	}
 	_, err := p.Usecase.Add(page.domain())
 	if err != nil {

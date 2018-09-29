@@ -31,6 +31,6 @@ func main() {
 	router.Handle("/api/v1/page", handler(pageAdapter.GET)).Methods("GET")
 
 	// toppageを追加するAPI {url: "hwertyui.com"}
-	router.Handle("api/v1/toppage", handler(pageAdapter.AddTopPage)).Methods("POST")
+	router.Handle("/api/v1/toppage", handler(pageAdapter.AddTopPage)).Methods("POST")
 	http.ListenAndServe(":8080", router)
 }
