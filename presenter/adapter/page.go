@@ -1,6 +1,7 @@
 package adapter
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -18,6 +19,14 @@ type Page struct {
 	ID      int64  `json:"id"`
 	URL     string `json:"url"`
 	Content string `json:"content"`
+}
+
+func (p *Page) domain() *page.Page {
+	return &page.Page{
+		ID:      p.ID,
+		URL:     p.URL,
+		Content: p.Content,
+	}
 }
 
 func NewPage(page *page.Page) *Page {
@@ -53,4 +62,16 @@ func (p *PageAdapter) GET(w http.ResponseWriter, r *http.Request) error {
 		return fmt.Errorf("usecase search error %v", err)
 	}
 	return utils.JSON(w, http.StatusOK, NewPages(pages))
+}
+
+func (p *PageAdapter) AddTopPage(w http.ResponseWriter, r *http.Request) error {
+	var page Page
+	if err := json.NewDecoder(r.Body).Decode(&page); err != nil {
+		return err
+	}
+	_, err := p.Usecase.Add(page.domain())
+	if err != nil {
+		return err
+	}
+	return utils.JSON(w, http.StatusCreated, nil)
 }
