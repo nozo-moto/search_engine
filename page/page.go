@@ -6,6 +6,7 @@ import (
 
 type PageRepository interface {
 	Add(page *Page) (*Page, error)
+	Search(query string, limit int) ([]*Page, error)
 }
 
 type PageUseCase struct {
@@ -31,11 +32,16 @@ func NewPage(url, content string) *Page {
 	}
 }
 
-func (p PageUseCase) Add(page *Page) (*Page, error) {
+func (p *PageUseCase) Add(page *Page) (*Page, error) {
 	page, err := p.PageRepo.Add(page)
 	if err != nil {
 		return nil, errors.Wrap(err, "usecase add error")
 	}
 
 	return page, nil
+}
+
+func (p *PageUseCase) Search(query string, limit int) ([]*Page, error) {
+	// TODO impl
+	return nil, nil
 }
