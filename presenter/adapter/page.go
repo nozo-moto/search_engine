@@ -75,3 +75,10 @@ func (p *PageAdapter) AddTopPage(w http.ResponseWriter, r *http.Request) error {
 	}
 	return utils.JSON(w, http.StatusCreated, nil)
 }
+
+func (p *PageAdapter) MoveCrawler(w http.ResponseWriter, r *http.Request) error {
+	// TODO
+	// Crawlerを動かす
+
+	return utils.JSON(w, http.StatusOK, nil)
+}
