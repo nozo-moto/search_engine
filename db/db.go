@@ -58,3 +58,18 @@ func (p *PageMySQLAdapter) Add(page *page.Page) (*page.Page, error) {
 
 	return page, nil
 }
+
+func (p *PageMySQLAdapter) Search(query string, limit int) ([]*page.Page, error) {
+	var pages []*PageMySQLAdapter
+	err := p.DB.Select(&pages, `SELECT * FROM Page WHERE MATCH (CONTENT) AGAINST(? IN BOOLEAN MODE) LIMIT ?`, query, limit)
+	if err != nil {
+		return nil, errors.Wrap(err, "page search error")
+	}
+
+	var result []*page.Page
+	for _, page := range pages {
+		result = append(result, page.domain())
+	}
+
+	return result, nil
+}

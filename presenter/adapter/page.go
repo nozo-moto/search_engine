@@ -1,10 +1,13 @@
 package adapter
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/nozo-moto/search_engine/page"
 	"github.com/nozo-moto/search_engine/utils"
+	"github.com/pkg/errors"
 )
 
 type PageAdapter struct {
@@ -41,11 +44,13 @@ func NewPageAdapter(pageUsecase *page.PageUseCase) *PageAdapter {
 
 func (p *PageAdapter) GET(w http.ResponseWriter, r *http.Request) error {
 	query := r.FormValue("q")
-	limit := 10
+	limit, err := strconv.Atoi(r.FormValue("limit"))
+	if err != nil {
+		return errors.Wrap(err, "strconv atoi error")
+	}
 	pages, err := p.Usecase.Search(query, limit)
 	if err != nil {
-		return err
+		return fmt.Errorf("usecase search error %v", err)
 	}
-
 	return utils.JSON(w, http.StatusOK, NewPages(pages))
 }

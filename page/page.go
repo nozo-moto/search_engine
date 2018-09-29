@@ -42,6 +42,9 @@ func (p *PageUseCase) Add(page *Page) (*Page, error) {
 }
 
 func (p *PageUseCase) Search(query string, limit int) ([]*Page, error) {
-	// TODO impl
-	return nil, nil
+	pages, err := p.PageRepo.Search(query, limit)
+	if err != nil {
+		return nil, errors.Wrap(err, "pagerepo search error")
+	}
+	return pages, nil
 }
