@@ -73,3 +73,17 @@ func (p *PageMySQLAdapter) Search(query string, limit int) ([]*page.Page, error)
 
 	return result, nil
 }
+
+func (p *PageMySQLAdapter) ContentNullPage() ([]*page.Page, error) {
+	var pages []*PageMySQLAdapter
+	// TODO write sql
+	err := p.DB.Select(&pages, ``)
+	if err != nil {
+		return nil, errors.Wrap(err, "contentnull page error")
+	}
+	var result []*page.Page
+	for _, page := range pages {
+		result = append(result, page.domain())
+	}
+	return result, nil
+}
