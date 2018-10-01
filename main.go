@@ -4,8 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/nozo-moto/search_engine/crawler"
 	"github.com/nozo-moto/search_engine/db"
 	"github.com/nozo-moto/search_engine/page"
+
 	"github.com/nozo-moto/search_engine/presenter/adapter"
 )
 
@@ -23,6 +25,9 @@ func main() {
 
 	pageAdapter := adapter.NewPageAdapter(
 		page.NewPageUseCase(
+			db.NewPageMySQLAdapter(dbx),
+		),
+		crawler.NewCrawleUseCase(
 			db.NewPageMySQLAdapter(dbx),
 		),
 	)

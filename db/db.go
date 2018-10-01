@@ -61,7 +61,7 @@ func (p *PageMySQLAdapter) Add(page *page.Page) (*page.Page, error) {
 
 func (p *PageMySQLAdapter) Search(query string, limit int) ([]*page.Page, error) {
 	var pages []*PageMySQLAdapter
-	err := p.DB.Select(&pages, `SELECT * FROM Page WHERE MATCH (CONTENT) AGAINST(? IN BOOLEAN MODE) LIMIT ?`, query, limit)
+	err := p.DB.Select(&pages, `SELECT * FROM Page WHERE MATCH ( CONTENT ) AGAINST (? IN NATURAL LANGUAGE MODE) LIMIT ?;`, query, limit)
 	if err != nil {
 		return nil, errors.Wrap(err, "page search error")
 	}
@@ -76,8 +76,7 @@ func (p *PageMySQLAdapter) Search(query string, limit int) ([]*page.Page, error)
 
 func (p *PageMySQLAdapter) ContentNullPage() ([]*page.Page, error) {
 	var pages []*PageMySQLAdapter
-	// TODO write sql
-	err := p.DB.Select(&pages, ``)
+	err := p.DB.Select(&pages, `SELECT * FROM Page WHERE CONTENT IS NULL`)
 	if err != nil {
 		return nil, errors.Wrap(err, "contentnull page error")
 	}

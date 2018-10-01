@@ -6,13 +6,15 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/nozo-moto/search_engine/crawler"
 	"github.com/nozo-moto/search_engine/page"
 	"github.com/nozo-moto/search_engine/utils"
 	"github.com/pkg/errors"
 )
 
 type PageAdapter struct {
-	Usecase *page.PageUseCase
+	Usecase       *page.PageUseCase
+	CrawleUseCase *crawler.CrawleUseCase
 }
 
 type Page struct {
@@ -45,9 +47,10 @@ func NewPages(pages []*page.Page) []*Page {
 	return result
 }
 
-func NewPageAdapter(pageUsecase *page.PageUseCase) *PageAdapter {
+func NewPageAdapter(pageUsecase *page.PageUseCase, crawleUsecase *crawler.CrawleUseCase) *PageAdapter {
 	return &PageAdapter{
-		Usecase: pageUsecase,
+		Usecase:       pageUsecase,
+		CrawleUseCase: crawleUsecase,
 	}
 }
 
@@ -77,8 +80,10 @@ func (p *PageAdapter) AddTopPage(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (p *PageAdapter) MoveCrawler(w http.ResponseWriter, r *http.Request) error {
-	// TODO
-	// Crawlerを動かす
+	err := p.CrawleUseCase.Crawle()
+	if err != nil {
+		return errors.Wrap(err, "usecase crawle error")
+	}
 
 	return utils.JSON(w, http.StatusOK, nil)
 }
