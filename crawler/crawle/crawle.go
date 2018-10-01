@@ -9,6 +9,8 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/google/uuid"
+	nkf "github.com/nozo-moto/go-nkf"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -80,10 +82,14 @@ func gettext(url string) (string, error) {
 	//		return "", err
 	//	}
 	text := doc.Find("body").Text()
+	textUTF8, err := nkf.ConvertText(text, "", "UTF8", "")
+	if err != nil {
+		return "", errors.Wrap(err, "nkf convert text error")
+	}
 	result := strings.Join(
 		strings.Split(
 			strings.TrimSpace(
-				text,
+				textUTF8,
 			),
 			"\n",
 		), " ",
