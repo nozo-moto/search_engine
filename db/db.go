@@ -1,6 +1,8 @@
 package db
 
 import (
+	"database/sql"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/nozo-moto/search_engine/page"
@@ -12,9 +14,9 @@ const (
 )
 
 type PageMySQLAdapter struct {
-	ID      int64  `db:"ID"`
-	URL     string `db:"URL"`
-	Content string `db:"CONTENT"`
+	ID      int64          `db:"ID"`
+	URL     string         `db:"URL"`
+	Content sql.NullString `db:"CONTENT"`
 	DB      *sqlx.DB
 }
 
@@ -28,7 +30,7 @@ func (p *PageMySQLAdapter) domain() *page.Page {
 	return &page.Page{
 		ID:      p.ID,
 		URL:     p.URL,
-		Content: p.Content,
+		Content: p.Content.String,
 	}
 }
 
