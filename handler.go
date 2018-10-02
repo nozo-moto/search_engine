@@ -11,7 +11,7 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/VG-Tech-Dojo/treasure2018-group-d/server/httputil"
+	"github.com/nozo-moto/search_engine/utils"
 )
 
 type handler func(w http.ResponseWriter, r *http.Request) error
@@ -32,11 +32,11 @@ func runHandler(w http.ResponseWriter, r *http.Request,
 
 	r.Body = http.MaxBytesReader(w, r.Body, 10000000)
 	r.ParseForm()
-	var buf httputil.ResponseBuffer
+	var buf utils.ResponseBuffer
 	err := fn(&buf, r)
 	if err == nil {
 		buf.WriteTo(w)
-	} else if e, ok := err.(*httputil.HTTPError); ok {
+	} else if e, ok := err.(*utils.HTTPError); ok {
 		if e.Status >= 500 {
 			logError(r, err, nil)
 		}

@@ -8,12 +8,6 @@
   version = "v1.4.1"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/VG-Tech-Dojo/treasure2018-group-d"
-  packages = ["server/httputil"]
-  revision = "7bce7d39906dbd6a13c22d9b655e293901d60dd7"
-
-[[projects]]
   name = "github.com/andybalholm/cascadia"
   packages = ["."]
   revision = "901648c87902174f774fac311d7f176f8647bdaa"
@@ -102,6 +96,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "de42ae3899b6a77b88122c14c729ff8019373c4fd61bba9e4a8202d48e19d1fa"
+  inputs-digest = "e1ffeda3f9ca5f6d3b402ed41d4d32e0cb77d4d74e063a3fe6d4bbaaa720cf7d"
   solver-name = "gps-cdcl"
   solver-version = 1
