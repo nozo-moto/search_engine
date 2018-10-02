@@ -31,6 +31,14 @@ func main() {
 		),
 	)
 
+	// router.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("front/dist/")))).Methods("GET")
+	router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "front/dist/index.html")
+	})
+	router.PathPrefix("/css").Handler(http.StripPrefix("/css", http.FileServer(http.Dir("front/dist/css"))))
+	router.PathPrefix("/js").Handler(http.StripPrefix("/js", http.FileServer(http.Dir("front/dist/js"))))
+	router.PathPrefix("/fonts").Handler(http.StripPrefix("/fonts", http.FileServer(http.Dir("front/dist/fonts"))))
+
 	// query parameterで q=検索したい文字列 limit=検索数
 	router.Handle("/api/v1/page", handler(pageAdapter.GET)).Methods("GET")
 
