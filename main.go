@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/nozo-moto/search_engine/crawler"
 	"github.com/nozo-moto/search_engine/db"
-	"github.com/nozo-moto/search_engine/http"
+	handle "github.com/nozo-moto/search_engine/handler"
 	"github.com/nozo-moto/search_engine/page"
 )
 
@@ -22,7 +22,7 @@ func main() {
 	}
 	defer dbx.Close()
 
-	pageAdapter := adapter.NewPageAdapter(
+	pageAdapter := handle.NewPageAdapter(
 		page.NewPageUseCase(
 			db.NewPageMySQLAdapter(dbx),
 		),
