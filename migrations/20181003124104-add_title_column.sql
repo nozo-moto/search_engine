@@ -1,0 +1,7 @@
+
+-- +migrate Up
+ALTER TABLE Page ADD TITLE VARCHAR(256) NOT NULL;
+-- +migrate Down
+ALTER TABLE Page DROP COLUMN TITLE;
+
+
