@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	nkf "github.com/nozo-moto/go-nkf"
 	"github.com/pkg/errors"
+	"github.com/saintfish/chardet"
 )
 
 const (
@@ -25,6 +26,8 @@ type TopPages struct {
 }
 
 func LoadTopPage() ([]TopPages, error) {
+	// TODO
+	// これ、DBから取ってくるような関数にする
 	p := []TopPages{}
 	bytes, err := ioutil.ReadFile("./" + ToppagePath)
 	if err != nil {
@@ -71,6 +74,20 @@ func (p *CrawlePage) GetLink() error {
 	return nil
 }
 
+func EncodeToUTF8(text string) (string, error) {
+
+	return "", nil
+}
+
+func GuessEncoding(text string) (string, error) {
+	detector := chardet.NewTextDetector()
+	result, err := detector.DetectBest([]byte(text))
+	if err != nil {
+		return "", err
+	}
+	return result.Charset, nil
+}
+
 func gettext(url string) (string, error) {
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
@@ -102,12 +119,10 @@ func geturlfrompage(url string) ([]string, error) {
 
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
-		fmt.Println(err, doc)
-		return nil, err
+		return nil, errors.Wrap(err, fmt.Sprint(doc))
 	}
 	var result []string
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
-
 		link, _ := s.Attr("href")
 
 		r := regexp.MustCompile(`web-ext`)
