@@ -98,3 +98,56 @@ func TestGuessEncoding(t *testing.T) {
 		})
 	}
 }
+
+func TestEncodeToUTF8(t *testing.T) {
+	f, err := os.Open(filepath.Join("testdata", "euc.html"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	testEUCdoc, err := goquery.NewDocumentFromReader(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	f, err = os.Open(filepath.Join("testdata", "utf8.html"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	utf8doc, err := goquery.NewDocumentFromReader(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	type args struct {
+		text string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{
+			name: "test euc",
+			args: args{
+				text: testEUCdoc.Text(),
+			},
+			want:    utf8doc.Text(),
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := EncodeToUTF8(tt.args.text)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("EncodeToUTF8() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("EncodeToUTF8() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"regexp"
 	"strings"
 
@@ -12,6 +13,8 @@ import (
 	nkf "github.com/nozo-moto/go-nkf"
 	"github.com/pkg/errors"
 	"github.com/saintfish/chardet"
+	"golang.org/x/text/encoding/japanese"
+	"golang.org/x/text/transform"
 )
 
 const (
@@ -75,8 +78,35 @@ func (p *CrawlePage) GetLink() error {
 }
 
 func EncodeToUTF8(text string) (string, error) {
+	charset, err := GuessEncoding(text)
+	if err != nil {
+		return "", err
+	}
+	log.Println(charset)
+	var encodedText []byte
+	switch charset {
+	case "EUC-JP":
+		encodedText, err = ioutil.ReadAll(transform.NewReader(strings.NewReader(text), japanese.EUCJP.NewDecoder()))
+		if err != nil {
+			return "", err
+		}
+	case "Shift_JIS":
+		encodedText, err = ioutil.ReadAll(transform.NewReader(strings.NewReader(text), japanese.ShiftJIS.NewDecoder()))
+		if err != nil {
+			return "", err
+		}
+	case "ISO-2022-JP":
+		encodedText, err = ioutil.ReadAll(transform.NewReader(strings.NewReader(text), japanese.ISO2022JP.NewDecoder()))
+		if err != nil {
+			return "", err
+		}
+	case "UTF-8":
+		return text, nil
+	default:
+		return text, nil
+	}
 
-	return "", nil
+	return string(encodedText), nil
 }
 
 func GuessEncoding(text string) (string, error) {
