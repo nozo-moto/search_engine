@@ -24,12 +24,14 @@ type Page struct {
 	ID      int64
 	URL     string
 	Content string
+	TITLE   string
 }
 
-func NewPage(url, content string) *Page {
+func NewPage(url, content, title string) *Page {
 	return &Page{
 		URL:     url,
 		Content: content,
+		TITLE:   title,
 	}
 }
 

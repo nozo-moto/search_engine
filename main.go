@@ -22,12 +22,13 @@ func main() {
 	}
 	defer dbx.Close()
 
+	mysqlAdapter := db.NewPageMySQLAdapter(dbx)
 	pageAdapter := handle.NewPageAdapter(
 		page.NewPageUseCase(
-			db.NewPageMySQLAdapter(dbx),
+			mysqlAdapter,
 		),
 		crawler.NewCrawleUseCase(
-			db.NewPageMySQLAdapter(dbx),
+			mysqlAdapter,
 		),
 	)
 
