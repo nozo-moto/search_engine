@@ -24,6 +24,7 @@ type Page struct {
 	ID      int64
 	URL     string
 	Content string
+	Title   string
 }
 
 func NewPage(url, content string) *Page {
