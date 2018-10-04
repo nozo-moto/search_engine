@@ -90,3 +90,11 @@ func (p *PageMySQLAdapter) ContentNullPage() ([]*page.Page, error) {
 	}
 	return result, nil
 }
+
+func (p *PageMySQLAdapter) DeleteNullPage() error {
+	_, err := p.DB.Exec(`DELETE FROM Page WHERE CONTENT IS NULL`)
+	if err != nil {
+		return err
+	}
+	return nil
+}

@@ -27,6 +27,11 @@ func (c *CrawleUseCase) Crawle() error {
 		return errors.Wrap(err, "pagereop contentnullpage error")
 	}
 	log.Println("null page = ", pages)
+	// TODO DBからContentがnullのデータを削除する
+	err = c.PageRepo.DeleteNullPage()
+	if err != nil {
+		return err
+	}
 
 	// webpage からデータを取得してくる
 	var crawledPage []*crawle.CrawlePage
@@ -79,6 +84,7 @@ func run(url, title string) ([]*crawle.CrawlePage, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Println("GetLinks ", page.Tolink)
 	pages = append(pages, page)
 	if len(page.Tolink) == 0 {
 		return pages, nil

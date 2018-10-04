@@ -145,6 +145,29 @@ func gettext(url string) (string, string, error) {
 	return result, titleUTF8, nil
 }
 
+func MakeAbsolutePath(baseURL, path string) string {
+	splitedPath := strings.Split(baseURL, "/")
+	base := splitedPath[0 : len(splitedPath)-1]
+	// TODO impl ../ path
+
+	var result string
+	p := strings.Split(path, "/")
+	cntdot := 0
+	for _, ps := range p {
+		if ps == ".." {
+			cntdot += 1
+		}
+	}
+	log.Println(cntdot, p, base)
+	if cntdot != 0 {
+		result = strings.Join(base[0:len(base)-cntdot], "/") + "/" + strings.Join(p[cntdot:len(p)], "/")
+	} else {
+		result = strings.Join(base, "/") + "/" + path
+	}
+
+	return result
+}
+
 func geturlfrompage(url string) ([]string, error) {
 	sawPages = append(sawPages, url)
 
@@ -153,19 +176,24 @@ func geturlfrompage(url string) ([]string, error) {
 		return nil, errors.Wrap(err, fmt.Sprint(doc))
 	}
 	var result []string
+	// TODO
+	// `/html`
+	// みたいなのも対応させる
+	// 相対パス対応
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
 		link, _ := s.Attr("href")
-
-		r := regexp.MustCompile(`web-ext`)
+		log.Println("link", link)
+		r1 := regexp.MustCompile(`web-ext`)
 		r2 := regexp.MustCompile(`web-int`)
 		r3 := regexp.MustCompile(`u-aizu`)
 		r4 := regexp.MustCompile(`html`)
-		if (r.MatchString(link) == true || r2.MatchString(link) == true || r3.MatchString(link) == true) && contains(sawPages, link) != true && r4.MatchString(link) == true {
+		if (r1.MatchString(link) == true || r2.MatchString(link) == true || r3.MatchString(link) == true) && contains(sawPages, link) != true && r4.MatchString(link) == true {
 			result = append(
 				result, link,
 			)
 		}
 	})
+	log.Println("geturl from page", url, result)
 	return result, nil
 }
 func contains(s []string, e string) bool {

@@ -21,18 +21,16 @@ func Test_geturlfrompage(t *testing.T) {
 		args    args
 		want    []string
 		wantErr bool
-	}{
-		{
-			name: "test webint",
-			args: args{
-				url: "https://web-int.u-aizu.ac.jp/official/index.html",
-			},
-			want: []string{
-				"http://web-int.u-aizu.ac.jp/labs/istc/ipc/index.html",
-				"http://www.u-aizu.ac.jp/e-current/e-internal.html",
-			},
-			wantErr: false,
+	}{{name: "test webint",
+		args: args{
+			url: "https://web-int.u-aizu.ac.jp/official/index.html",
 		},
+		want: []string{
+			"http://web-int.u-aizu.ac.jp/labs/istc/ipc/index.html",
+			"http://www.u-aizu.ac.jp/e-current/e-internal.html",
+		},
+		wantErr: false,
+	},
 		{
 			name: "test is not webint",
 			args: args{
@@ -183,6 +181,50 @@ func Test_gettext(t *testing.T) {
 
 			if got1 != tt.want1 {
 				t.Errorf("gettext() got1 = %v, want %v", got1, tt.want1)
+			}
+		})
+	}
+}
+
+func TestMakeAbsolutePath(t *testing.T) {
+	type args struct {
+		baseURL string
+		path    string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "test",
+			args: args{
+				baseURL: "https://web-int.u-aizu.ac.jp/~fayolle/teaching/cg/index.html",
+				path:    "exercise/ex06.html",
+			},
+			want: "https://web-int.u-aizu.ac.jp/~fayolle/teaching/cg/exercise/ex06.html",
+		},
+		{
+			name: "test ..",
+			args: args{
+				baseURL: "http://web-ext.u-aizu.ac.jp/~hamada/edu/LP.html",
+				path:    "../LPS/Parser.html",
+			},
+			want: "http://web-ext.u-aizu.ac.jp/~hamada/LPS/Parser.html",
+		},
+		{
+			name: "test ..",
+			args: args{
+				baseURL: "http://web-ext.u-aizu.ac.jp/~hamada/edu/LP.html",
+				path:    "../../LPS/Parser.html",
+			},
+			want: "http://web-ext.u-aizu.ac.jp/LPS/Parser.html",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := MakeAbsolutePath(tt.args.baseURL, tt.args.path); got != tt.want {
+				t.Errorf("MakeAbsolutePath() = %v, want %v", got, tt.want)
 			}
 		})
 	}
