@@ -10,7 +10,6 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/google/uuid"
-	nkf "github.com/nozo-moto/go-nkf"
 	"github.com/pkg/errors"
 	"github.com/saintfish/chardet"
 	"golang.org/x/text/encoding/japanese"
@@ -123,15 +122,11 @@ func gettext(url string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// TODO: utf8に全て変換する
-	//	text, err := charsetutil.DecodeString(doc.Find("body").Text(), "EUC-JP")
-	//	if err != nil {
-	//		return "", err
-	//	}
 	text := doc.Find("body").Text()
-	textUTF8, err := nkf.ConvertText(text, "", "UTF8", "")
+
+	textUTF8, err := EncodeToUTF8(text)
 	if err != nil {
-		return "", errors.Wrap(err, "nkf convert text error")
+		return "", errors.Wrap(err, "convert text error")
 	}
 	result := strings.Join(
 		strings.Split(

@@ -25,6 +25,7 @@ func (c *CrawleUseCase) Crawle() error {
 		return errors.Wrap(err, "pagereop contentnullpage error")
 	}
 
+	// webpage からデータを取得してくる
 	var crawledPage []*crawle.CrawlePage
 	for _, page := range pages {
 		result, err := run(page.URL, "")
@@ -60,7 +61,6 @@ func (c *CrawleUseCase) Crawle() error {
 var pages []*crawle.CrawlePage
 
 func run(url, title string) ([]*crawle.CrawlePage, error) {
-
 	page, err := crawle.NewPage(url, title)
 	if err != nil {
 		return nil, err
