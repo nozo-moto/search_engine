@@ -151,3 +151,39 @@ func TestEncodeToUTF8(t *testing.T) {
 		})
 	}
 }
+
+func Test_gettext(t *testing.T) {
+	type args struct {
+		url string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		want1   string
+		wantErr bool
+	}{
+		{
+			name: "example.com",
+			args: args{
+				url: "https://www.example.com/",
+			},
+			want:    "",
+			want1:   "Example Domain",
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, got1, err := gettext(tt.args.url)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("gettext() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if got1 != tt.want1 {
+				t.Errorf("gettext() got1 = %v, want %v", got1, tt.want1)
+			}
+		})
+	}
+}

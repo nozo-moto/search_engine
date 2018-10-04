@@ -59,11 +59,12 @@ func NewPage(url, title string) (*CrawlePage, error) {
 }
 
 func (p *CrawlePage) GetTEXT() error {
-	text, err := gettext(p.URL)
+	text, title, err := gettext(p.URL)
 	if err != nil {
 		return err
 	}
 	p.TEXT = text
+	p.TITLE = title
 	return nil
 }
 
@@ -117,16 +118,21 @@ func GuessEncoding(text string) (string, error) {
 	return result.Charset, nil
 }
 
-func gettext(url string) (string, error) {
+func gettext(url string) (string, string, error) {
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	text := doc.Find("body").Text()
+	title := doc.Find("title").Text()
 
 	textUTF8, err := EncodeToUTF8(text)
 	if err != nil {
-		return "", errors.Wrap(err, "convert text error")
+		return "", "", errors.Wrap(err, "convert text error")
+	}
+	titleUTF8, err := EncodeToUTF8(title)
+	if err != nil {
+		return "", "", errors.Wrap(err, "convert title error")
 	}
 	result := strings.Join(
 		strings.Split(
@@ -136,7 +142,7 @@ func gettext(url string) (string, error) {
 			"\n",
 		), " ",
 	)
-	return result, nil
+	return result, titleUTF8, nil
 }
 
 func geturlfrompage(url string) ([]string, error) {
