@@ -176,13 +176,14 @@ func geturlfrompage(url string) ([]string, error) {
 		return nil, errors.Wrap(err, fmt.Sprint(doc))
 	}
 	var result []string
-	// TODO
-	// `/html`
 	// みたいなのも対応させる
 	// 相対パス対応
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
 		link, _ := s.Attr("href")
 		log.Println("link", link)
+		if ok := strings.Contains(link, "http"); ok == false {
+			link = MakeAbsolutePath(url, link)
+		}
 		r1 := regexp.MustCompile(`web-ext`)
 		r2 := regexp.MustCompile(`web-int`)
 		r3 := regexp.MustCompile(`u-aizu`)
