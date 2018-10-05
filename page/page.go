@@ -9,6 +9,7 @@ type PageRepository interface {
 	Search(query string, limit int) ([]*Page, error)
 	ContentNullPage() ([]*Page, error)
 	DeleteNullPage() error
+	AddTopPage(url string) error
 }
 
 type PageUseCase struct {
@@ -26,6 +27,7 @@ type Page struct {
 	URL     string
 	Content string
 	TITLE   string
+	Desc    string
 }
 
 func NewPage(url, content, title string) *Page {
@@ -62,4 +64,8 @@ func (p *PageUseCase) ContentNullPage() ([]*Page, error) {
 }
 func (p *PageUseCase) DeleteNullPage() error {
 	return p.PageRepo.DeleteNullPage()
+}
+
+func (p *PageUseCase) AddTopPage(url string) error {
+	return p.PageRepo.AddTopPage(url)
 }
