@@ -39,9 +39,9 @@ export default {
   },
   methods: {
     search: function() {
-      isLoading = true;
+      this.isLoading = true;
       let url = "localhost:8080/api/v1/page";
-      url += "?q=" + searchWord + "&limit=" + limit;
+      url += "?q=" + this.searchWord + "&limit=" + this.limit;
       fetch(url, {
         method: "GET"
       })
@@ -54,13 +54,13 @@ export default {
         .then(res_json => {
           // TODO
           // Table
-          // eslint-disable-next-lint
+          // eslint-disable-next-line
           console.log(res_json);
-          isLoading = false;
-          searchedData = res_json;
+          this.isLoading = false;
+          this.searchedData = res_json;
         })
         .catch(err => {
-          // eslint-disable-next-lint
+          // eslint-disable-next-line
           console.error(err);
         });
     }
