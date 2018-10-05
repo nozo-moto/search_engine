@@ -21,6 +21,8 @@ type Page struct {
 	ID      int64  `json:"id"`
 	URL     string `json:"url"`
 	Content string `json:"content"`
+	Desc    string `json:"desc"`
+	Title   string `json:"title"`
 }
 
 func (p *Page) domain() *page.Page {
@@ -36,6 +38,8 @@ func NewPage(page *page.Page) *Page {
 		ID:      page.ID,
 		URL:     page.URL,
 		Content: page.Content,
+		Desc:    page.Desc,
+		Title:   page.TITLE,
 	}
 }
 
@@ -72,7 +76,7 @@ func (p *PageAdapter) AddTopPage(w http.ResponseWriter, r *http.Request) error {
 	if err := json.NewDecoder(r.Body).Decode(&page); err != nil {
 		return errors.Wrap(err, "addtoppage json newdecode error")
 	}
-	_, err := p.Usecase.Add(page.domain())
+	err := p.Usecase.AddTopPage(page.URL)
 	if err != nil {
 		return err
 	}

@@ -65,6 +65,20 @@ func (p *PageMySQLAdapter) Add(page *page.Page) (*page.Page, error) {
 	return page, nil
 }
 
+func (p *PageMySQLAdapter) AddTopPage(url string) error {
+	stmt, err := p.DB.Prepare(`INSERT INTO Page(URL, TITLE) VALUES(?, "")`)
+	if err != nil {
+		return errors.Wrap(err, "page insert error")
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(url)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *PageMySQLAdapter) Search(query string, limit int) ([]*page.Page, error) {
 	var pages []*PageMySQLAdapter
 	err := p.DB.Select(&pages, `SELECT * FROM Page WHERE MATCH ( CONTENT ) AGAINST (? IN NATURAL LANGUAGE MODE) LIMIT ?;`, query, limit)

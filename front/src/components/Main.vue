@@ -40,7 +40,7 @@ export default {
   methods: {
     search: function() {
       this.isLoading = true;
-      let url = "localhost:8080/api/v1/page";
+      let url = "http://localhost:8080/api/v1/page";
       url += "?q=" + this.searchWord + "&limit=" + this.limit;
       fetch(url, {
         method: "GET"
