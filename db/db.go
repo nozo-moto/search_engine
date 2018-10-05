@@ -19,6 +19,7 @@ type PageMySQLAdapter struct {
 	URL     string         `db:"URL"`
 	Content sql.NullString `db:"CONTENT"`
 	TITLE   string         `db:"TITLE"`
+	Desc    sql.NullString `db:"DESCRIPTION"`
 	DB      *sqlx.DB
 }
 
@@ -34,6 +35,7 @@ func (p *PageMySQLAdapter) domain() *page.Page {
 		URL:     p.URL,
 		Content: p.Content.String,
 		TITLE:   p.TITLE,
+		Desc:    p.Desc.String,
 	}
 }
 
@@ -46,13 +48,13 @@ func ConnectToDatabase() (*sqlx.DB, error) {
 }
 
 func (p *PageMySQLAdapter) Add(page *page.Page) (*page.Page, error) {
-	stmt, err := p.DB.Prepare(`INSERT INTO Page (URL, CONTENT, TITLE) VALUES (?, ?, ?)`)
+	stmt, err := p.DB.Prepare(`INSERT INTO Page (URL, CONTENT, TITLE, DESCRIPTION) VALUES (?, ?, ?, ?)`)
 	defer stmt.Close()
 	if err != nil {
 		return nil, errors.Wrap(err, "page insert error")
 	}
 
-	result, err := stmt.Exec(page.URL, page.Content, page.TITLE)
+	result, err := stmt.Exec(page.URL, page.Content, page.TITLE, page.Desc)
 	if err != nil {
 		return nil, errors.Wrap(err, "stmt exec error")
 	}

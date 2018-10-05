@@ -159,6 +159,7 @@ func Test_gettext(t *testing.T) {
 		args    args
 		want    string
 		want1   string
+		want2   string
 		wantErr bool
 	}{
 		{
@@ -168,12 +169,13 @@ func Test_gettext(t *testing.T) {
 			},
 			want:    "",
 			want1:   "Example Domain",
+			want2:   "",
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, got1, err := gettext(tt.args.url)
+			_, got1, got2, err := gettext(tt.args.url)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("gettext() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -181,6 +183,9 @@ func Test_gettext(t *testing.T) {
 
 			if got1 != tt.want1 {
 				t.Errorf("gettext() got1 = %v, want %v", got1, tt.want1)
+			}
+			if got2 != tt.want2 {
+				t.Errorf("gettext() got2 = %v, want %v", got2, tt.want2)
 			}
 		})
 	}
