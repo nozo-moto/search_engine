@@ -15,6 +15,7 @@ const (
 
 type PageMySQLAdapter struct {
 	ID      int64          `db:"ID"`
+	Title   string         `db:"TITLE"`
 	URL     string         `db:"URL"`
 	Content sql.NullString `db:"CONTENT"`
 	TITLE   string         `db:"TITLE"`
@@ -50,6 +51,7 @@ func (p *PageMySQLAdapter) Add(page *page.Page) (*page.Page, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "page insert error")
 	}
+
 	result, err := stmt.Exec(page.URL, page.Content, page.TITLE)
 	if err != nil {
 		return nil, errors.Wrap(err, "stmt exec error")

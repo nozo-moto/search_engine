@@ -9,6 +9,9 @@ dep:
 run: 
 	go run main.go handler.go
 
+test:
+	go test github.com/nozo-moto/search_engine/db
+
 migrate/init:
 	mysql -u root -h 0.0.0.0 -P 13306 --protocol tcp -e "create database \`$(DBNAME)\`" -p
 
