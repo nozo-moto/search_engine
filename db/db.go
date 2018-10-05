@@ -18,6 +18,7 @@ type PageMySQLAdapter struct {
 	Title   string         `db:"TITLE"`
 	URL     string         `db:"URL"`
 	Content sql.NullString `db:"CONTENT"`
+	TITLE   string         `db:"TITLE"`
 	DB      *sqlx.DB
 }
 
@@ -32,7 +33,7 @@ func (p *PageMySQLAdapter) domain() *page.Page {
 		ID:      p.ID,
 		URL:     p.URL,
 		Content: p.Content.String,
-		Title:   p.Title,
+		TITLE:   p.TITLE,
 	}
 }
 
@@ -50,7 +51,8 @@ func (p *PageMySQLAdapter) Add(page *page.Page) (*page.Page, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "page insert error")
 	}
-	result, err := stmt.Exec(page.URL, page.Content, page.Title)
+
+	result, err := stmt.Exec(page.URL, page.Content, page.TITLE)
 	if err != nil {
 		return nil, errors.Wrap(err, "stmt exec error")
 	}
@@ -89,4 +91,12 @@ func (p *PageMySQLAdapter) ContentNullPage() ([]*page.Page, error) {
 		result = append(result, page.domain())
 	}
 	return result, nil
+}
+
+func (p *PageMySQLAdapter) DeleteNullPage() error {
+	_, err := p.DB.Exec(`DELETE FROM Page WHERE CONTENT IS NULL`)
+	if err != nil {
+		return err
+	}
+	return nil
 }
