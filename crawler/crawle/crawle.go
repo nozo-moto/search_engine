@@ -43,10 +43,11 @@ func LoadTopPage() ([]TopPages, error) {
 }
 
 type CrawlePage struct {
-	ID       string   `json:"id"`
-	URL      string   `json:"url"`
-	TITLE    string   `json:"title"`
-	TEXT     string   `json:"text"`
+	ID       string `json:"id"`
+	URL      string `json:"url"`
+	TITLE    string `json:"title"`
+	TEXT     string `json:"text"`
+	Desc     string
 	Tolink   []string `json:"tolink"`
 	ToBelink []string `json:"to_belink"`
 }
@@ -54,17 +55,20 @@ type CrawlePage struct {
 func NewPage(url, title string) (*CrawlePage, error) {
 	uuid := uuid.New().String()
 	return &CrawlePage{
-		uuid, url, title, "", nil, nil,
+		ID:    uuid,
+		URL:   url,
+		TITLE: title,
 	}, nil
 }
 
 func (p *CrawlePage) GetTEXT() error {
-	text, title, err := gettext(p.URL)
+	text, title, desc, err := gettext(p.URL)
 	if err != nil {
 		return err
 	}
 	p.TEXT = text
 	p.TITLE = title
+	p.Desc = desc
 	return nil
 }
 
@@ -118,21 +122,31 @@ func GuessEncoding(text string) (string, error) {
 	return result.Charset, nil
 }
 
-func gettext(url string) (string, string, error) {
+func gettext(url string) (string, string, string, error) {
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 	text := doc.Find("body").Text()
 	title := doc.Find("title").Text()
+	var desc string
+	doc.Find("meta").Each(func(i int, s *goquery.Selection) {
+		if name, _ := s.Attr("name"); strings.EqualFold(name, "description") {
+			desc, _ = s.Attr("content")
+		}
+	})
 
 	textUTF8, err := EncodeToUTF8(text)
 	if err != nil {
-		return "", "", errors.Wrap(err, "convert text error")
+		return "", "", "", errors.Wrap(err, "convert text error")
 	}
 	titleUTF8, err := EncodeToUTF8(title)
 	if err != nil {
-		return "", "", errors.Wrap(err, "convert title error")
+		return "", "", "", errors.Wrap(err, "convert title error")
+	}
+	descUTF8, err := EncodeToUTF8(desc)
+	if err != nil {
+		return "", "", "", errors.Wrap(err, "convert desc error")
 	}
 	result := strings.Join(
 		strings.Split(
@@ -142,7 +156,7 @@ func gettext(url string) (string, string, error) {
 			"\n",
 		), " ",
 	)
-	return result, titleUTF8, nil
+	return result, titleUTF8, descUTF8, nil
 }
 
 func MakeAbsolutePath(baseURL, path string) string {
