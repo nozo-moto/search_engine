@@ -20,7 +20,7 @@ func TestAdd(t *testing.T) {
 					ID:      0,
 					URL:     "example.com/test",
 					Content: "日本語が動くかのテストだよ",
-					Title:   "テスト",
+					TITLE:   "テスト",
 				},
 			},
 			Word:  "日本語",
