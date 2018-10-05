@@ -19,7 +19,7 @@ type PageMySQLAdapter struct {
 	URL     string         `db:"URL"`
 	Content sql.NullString `db:"CONTENT"`
 	TITLE   string         `db:"TITLE"`
-	Desc    string         `db:"DESCRIPTION"`
+	Desc    sql.NullString `db:"DESCRIPTION"`
 	DB      *sqlx.DB
 }
 
@@ -35,7 +35,7 @@ func (p *PageMySQLAdapter) domain() *page.Page {
 		URL:     p.URL,
 		Content: p.Content.String,
 		TITLE:   p.TITLE,
-		Desc:    p.Desc,
+		Desc:    p.Desc.String,
 	}
 }
 
