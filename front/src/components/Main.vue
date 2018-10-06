@@ -1,7 +1,7 @@
 <template>
   <div class="mainComponent">
-    <div class="search-folder" style="width: 600px;">
-      <el-input size="large" placeholder="検索するワードを入力してください" v-model="searchWord" class="input-with-select">
+    <div class="search-folder" style="text-align: center;">
+      <el-input size="large" placeholder="検索するワードを入力してください" v-model="searchWord" class="input-with-select" style="width: 300px; text-align: center">
         <el-select slot="prepend" label="hitlimit" placeholder="表示する検索ヒット数">
           <el-option label="表示する検索ヒット数"></el-option>
           <el-input-number v-model="limit" controls-position="left" :min="1" :max="30"></el-input-number>
@@ -11,7 +11,7 @@
     </div>
     <el-table
       :data="searchedData"
-      style="width: 100%"
+      style="width: 1000px; text-align: center;"
       empty-text="no data">
       <el-table-column
         label="title"
@@ -34,9 +34,7 @@ export default {
   data() {
     return {
       searchWord: "",
-      searchedData: [
-        { id: 0, url: "", desc: "", title: "" }
-      ],
+      searchedData: [{ id: 0, url: "", desc: "", title: "" }],
       limit: 10,
       isLoading: false
     };
@@ -90,6 +88,13 @@ a {
 }
 
 .search-folder {
-
+}
+.mainComponent {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>
