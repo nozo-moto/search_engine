@@ -1,24 +1,28 @@
 <template>
   <div class="mainComponent">
-    <el-input placeholder="input search word" v-model="searchWord"></el-input>
-    <el-input placeholder="limit" v-model="limit"></el-input>
-    <el-button type="primary" :loading="isLoading" v-on:click="search">Search</el-button>
+    <div class="search-folder" style="text-align: center;">
+      <el-input size="large" placeholder="検索するワードを入力してください" v-model="searchWord" class="input-with-select" style="width: 300px; text-align: center">
+        <el-select slot="prepend" label="hitlimit" placeholder="表示する検索ヒット数">
+          <el-option label="表示する検索ヒット数"></el-option>
+          <el-input-number v-model="limit" controls-position="left" :min="1" :max="30"></el-input-number>
+        </el-select>
+        <el-button type="primary" :loading="isLoading" v-on:click="search" slot="append" icon="el-icon-search"></el-button>
+      </el-input>
+    </div>
     <el-table
       :data="searchedData"
-      style="width: 100%">
+      style="width: 1000px; text-align: center;"
+      empty-text="no data">
       <el-table-column
-        prop="url"
-        label="url"
-        width="180">
+        label="title"
+        width="300">
+        <template slot-scope="scope">
+          <a :href="scope.row.url"> {{ scope.row.title }} </a>
+        </template>
       </el-table-column>
       <el-table-column
         prop="desc"
-        label="description"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="title"
-        label="title">
+        label="description">
       </el-table-column>
     </el-table>
   </div>
@@ -30,10 +34,8 @@ export default {
   data() {
     return {
       searchWord: "",
-      searchedData: [
-        { id: 0, url: "hoge.com", desc: "test desc", title: "test title" }
-      ],
-      limit: 0,
+      searchedData: [{ id: 0, url: "", desc: "", title: "" }],
+      limit: 10,
       isLoading: false
     };
   },
@@ -83,5 +85,16 @@ li {
 }
 a {
   color: #42b983;
+}
+
+.search-folder {
+}
+.mainComponent {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>
