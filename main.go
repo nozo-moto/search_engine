@@ -1,13 +1,17 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 
+	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
 	"github.com/nozo-moto/search_engine/crawler"
 	"github.com/nozo-moto/search_engine/db"
 	handle "github.com/nozo-moto/search_engine/handler"
 	"github.com/nozo-moto/search_engine/page"
+	redisCache "github.com/nozo-moto/search_engine/redis"
 )
 
 type Server struct {
@@ -21,11 +25,23 @@ func main() {
 		panic(err)
 	}
 	defer dbx.Close()
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+	val, err := redisClient.Ping().Result()
+	if err != nil {
+		panic(errors.New(fmt.Sprint(err, val)))
+	}
 
 	mysqlAdapter := db.NewPageMySQLAdapter(dbx)
+	redisAdapter := redisCache.NewRedisAdapter(redisClient)
+
 	pageAdapter := handle.NewPageAdapter(
 		page.NewPageUseCase(
 			mysqlAdapter,
+			redisAdapter,
 		),
 		crawler.NewCrawleUseCase(
 			mysqlAdapter,

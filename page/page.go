@@ -1,6 +1,9 @@
 package page
 
 import (
+	"encoding/json"
+
+	redisCache "github.com/nozo-moto/search_engine/redis"
 	"github.com/pkg/errors"
 )
 
@@ -13,12 +16,14 @@ type PageRepository interface {
 }
 
 type PageUseCase struct {
-	PageRepo PageRepository
+	PageRepo     PageRepository
+	RedisAdapter *redisCache.RedisAdapter
 }
 
-func NewPageUseCase(pr PageRepository) *PageUseCase {
+func NewPageUseCase(pr PageRepository, redis *redisCache.RedisAdapter) *PageUseCase {
 	return &PageUseCase{
-		PageRepo: pr,
+		PageRepo:     pr,
+		RedisAdapter: redis,
 	}
 }
 
@@ -48,11 +53,31 @@ func (p *PageUseCase) Add(page *Page) (*Page, error) {
 }
 
 func (p *PageUseCase) Search(query string, limit int) ([]*Page, error) {
-	pages, err := p.PageRepo.Search(query, limit)
+	result := []*Page{}
+	resultByte, err := p.RedisAdapter.GetSearch(query, string(limit))
 	if err != nil {
-		return nil, errors.Wrap(err, "pagerepo search error")
+		result, err = p.PageRepo.Search(query, limit)
+		if err != nil {
+			return nil, errors.Wrap(err, "pagerepo search error")
+		}
+		go func() {
+			resultByte, err = json.Marshal(result)
+			if err != nil {
+				panic(err)
+			}
+			err = p.RedisAdapter.SetSearch(query, string(limit), resultByte)
+			if err != nil {
+				panic(err)
+			}
+		}()
+		return result, nil
 	}
-	return pages, nil
+	err = json.Unmarshal(resultByte, result)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func (p *PageUseCase) ContentNullPage() ([]*Page, error) {

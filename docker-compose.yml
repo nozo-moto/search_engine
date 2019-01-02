@@ -4,8 +4,16 @@ services:
   mysql:
     image: mysql:5.7
     container_name: search-engine-mysql
-    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_DATABASE: 'search_engine'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'password'
     ports:
       - 13306:3306
+  redis:
+    image: redis:5.0.3
+    container_name: search-engine-redis
+    ports:
+      - 6379:6379
+    command: redis-server --appendonly yes --requirepass foobared

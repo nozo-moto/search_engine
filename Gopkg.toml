@@ -14,3 +14,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/nozo-moto/go-nkf"
+
+[[constraint]]
+  name = "github.com/go-redis/redis"
+  version = "6.15.0"
